@@ -1,0 +1,11 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: Ticket Module
+
+app:
+  urls:
+    partner: http://localhost:8083
+    core: http://localhost:8081

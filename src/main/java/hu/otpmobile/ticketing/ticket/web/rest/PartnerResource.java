@@ -4,6 +4,7 @@ import hu.otpmobile.ticketing.ticket.service.PartnerService;
 import hu.otpmobile.ticketing.ticket.web.dto.EventDetailsResponse;
 import hu.otpmobile.ticketing.ticket.web.dto.EventsResponse;
 import hu.otpmobile.ticketing.ticket.web.dto.ReservationRequest;
+import hu.otpmobile.ticketing.ticket.web.dto.ReservationResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,8 +32,9 @@ public class PartnerResource {
   }
 
   @PostMapping("/reserve")
-  private void reserveSeat(@RequestBody @Valid ReservationRequest reservationRequest) {
-    partnerService.reserveSeat(reservationRequest);
+  private ReservationResponse reserveSeat(
+      @RequestBody @Valid ReservationRequest reservationRequest) {
+    return partnerService.reserveSeat(reservationRequest);
   }
 
 }

@@ -1,11 +1,13 @@
 package hu.otpmobile.ticketing.ticket.service;
 
 import hu.otpmobile.ticketing.ticket.client.core.CoreClient;
+import hu.otpmobile.ticketing.ticket.client.core.dto.UserPaymentRequest;
 import hu.otpmobile.ticketing.ticket.client.partner.PartnerClient;
 import hu.otpmobile.ticketing.ticket.client.partner.dto.PartnerReservationRequest;
 import hu.otpmobile.ticketing.ticket.web.dto.EventDetailsResponse;
 import hu.otpmobile.ticketing.ticket.web.dto.EventsResponse;
 import hu.otpmobile.ticketing.ticket.web.dto.ReservationRequest;
+import hu.otpmobile.ticketing.ticket.web.dto.ReservationResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,7 +28,7 @@ public class PartnerService {
     return partnerClient.getEvent(id);
   }
 
-  public void reserveSeat(ReservationRequest reservationRequest) {
+  public ReservationResponse reserveSeat(ReservationRequest reservationRequest) {
     var eventDetails = getEvent(reservationRequest.getEventId());
     var userDetails = coreClient.getUserDetails(reservationRequest.getUserId());
 
@@ -61,8 +63,11 @@ public class PartnerService {
             reservationRequest.getSeatId()));
 
     if (response.isSuccess()) {
-      coreClient.deductSeatPrice(reservationRequest.getUserId(), reservationRequest.getCardId(),
-          seat.getPrice());
+      coreClient.paySeatPrice(
+          new UserPaymentRequest(reservationRequest.getUserId(), reservationRequest.getCardId(),
+              seat.getPrice()));
     }
+
+    return response;
   }
 }

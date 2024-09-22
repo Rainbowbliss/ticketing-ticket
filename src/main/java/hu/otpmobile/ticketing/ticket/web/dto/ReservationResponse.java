@@ -1,4 +1,4 @@
-package hu.otpmobile.ticketing.ticket.client.partner.dto;
+package hu.otpmobile.ticketing.ticket.web.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PartnerReservationResponse {
+public class ReservationResponse {
 
   private Long reservationId;
   private boolean success;
