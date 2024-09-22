@@ -8,6 +8,8 @@ import hu.otpmobile.ticketing.ticket.web.dto.EventDetailsResponse;
 import hu.otpmobile.ticketing.ticket.web.dto.EventsResponse;
 import hu.otpmobile.ticketing.ticket.web.dto.ReservationRequest;
 import hu.otpmobile.ticketing.ticket.web.dto.ReservationResponse;
+import hu.otpmobile.ticketing.ticket.web.error.ErrorType;
+import hu.otpmobile.ticketing.ticket.web.error.exception.TicketingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,7 +36,7 @@ public class PartnerService {
 
     if (!reservationRequest.getCardId().equals(userDetails.getCardId())) {
       log.error("Ez a bankkártya nem ehhez a felhasználóhoz tartozik");
-      throw new RuntimeException();
+      throw new TicketingException(ErrorType.WRONG_BANK_CARD_ID);
     }
 
     var seatOptional = eventDetails.getData().getSeats().stream()
@@ -43,19 +45,19 @@ public class PartnerService {
 
     if (seatOptional.isEmpty()) {
       log.error("Nem létezik ilyen szék!");
-      throw new RuntimeException();
+      throw new TicketingException(ErrorType.SEAT_DOES_NOT_EXISTS);
     }
 
     var seat = seatOptional.get();
 
     if (seat.isReserved()) {
       log.error("Már lefoglalt székre nem lehet jegyet eladni!");
-      throw new RuntimeException();
+      throw new TicketingException(ErrorType.RESERVED_SEAT);
     }
 
     if (userDetails.getCardBalance().compareTo(seat.getPrice()) < 0) {
       log.error("A felhasználónak nincs elegendő pénze hogy megvásárolja a jegyet!");
-      throw new RuntimeException();
+      throw new TicketingException(ErrorType.NOT_ENOUGH_MONEY);
     }
 
     var response = partnerClient.reserveSeat(
